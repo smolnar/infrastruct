@@ -1,4 +1,5 @@
 # Infrastruct
+[![Build Status](https://travis-ci.org/smolnar/infrastruct.svg?branch=master)](https://travis-ci.org/smolnar/infrastruct)
 
 Process and distribute asynchronous tasks and merge their results.
 
