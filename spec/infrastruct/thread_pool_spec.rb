@@ -1,37 +1,32 @@
 require 'spec_helper'
 
 RSpec.describe Infrastruct::ThreadPool do
-  subject { Infrastruct::ThreadPool.new(threads: 5) }
+  subject { Infrastruct::ThreadPool.new(runner, threads: 5) }
 
-  describe '#run' do
-    it 'runs thread with nonblocking queue' do
-      args = (0..300).to_a
-      block = -> {}
+  let(:runner) { double(:runner) }
 
-      args.each do |n|
-        expect(block).to receive(:call).with(n)
-      end
+  describe '#enqueue' do
+    it 'enqueues arguments to queue' do
+      expect_any_instance_of(Infrastruct::BlockingQueue).to receive(:push).with([1, 2])
 
-      args.each do |n|
-        subject.enqueue(n)
-      end
-
-      subject.run(&block)
+      subject.enqueue([1, 2])
     end
   end
 
-  describe '#enqueue' do
-    it 'it enqueues params for worker' do
-      subject.enqueue(1)
+  describe '#run' do
+    it 'runs runner and collect results' do
+      subject.run
 
-      expect(subject.queue.pop).to eql(1)
-    end
+      expect(runner).to receive(:perform).with([1]).and_return(:first)
+      expect(runner).to receive(:perform).with([2]).and_return(:second)
+      expect(runner).to receive(:perform).with([3, 4, 5]).and_return(:third)
+      expect(runner).to receive(:collect).with([:first, :second, :third])
 
-    it 'enqueues blocks as well' do
-      block = -> { }
-      subject.enqueue([1, block])
+      subject.enqueue([1])
+      subject.enqueue([2])
+      subject.enqueue([3, 4, 5])
 
-      expect(subject.queue.pop).to eql([1, block])
+      subject.finalize
     end
   end
 end

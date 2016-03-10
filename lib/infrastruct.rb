@@ -1,18 +1,20 @@
 require 'thread'
 require 'infrastruct/version'
 require 'infrastruct/manager'
-require 'infrastruct/nonblocking_queue'
+require 'infrastruct/runner'
+require 'infrastruct/blocking_queue'
 require 'infrastruct/thread_pool'
 
 module Infrastruct
   def create
-    pool = Infrastruct::ThreadPool.new(threads: options[:threads])
+    runner = Infrastruct::Runner.new(self)
+    pool = Infrastruct::ThreadPool.new(runner, threads: options[:threads])
 
-    Manager.new(self, thread_pool: pool)
+    Manager.new(pool)
   end
 
   def options(options = {})
-    @options ||= { threads: 5 }
+    @options ||= { threads: 25 }
 
     @options.merge(options)
 

@@ -21,7 +21,7 @@ RSpec.describe Infrastruct do
       worker.enqueue(2)
       worker.enqueue(3)
 
-      sum = worker.run
+      sum = worker.result
 
       expect(sum).to eql(14)
     end

@@ -54,7 +54,7 @@ worker.enqueue(3)
 Run worker and wait for merge results.
 
 ```
-sum = worker.run # => 1 ^ 2 + 2 ^ 2 + 3 ^ 2 = 14
+sum = worker.result # => 1 ^ 2 + 2 ^ 2 + 3 ^ 2 = 14
 ```
 
 ## Development
