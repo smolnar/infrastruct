@@ -4,7 +4,6 @@ module Infrastruct
       @runner = runner
       @number_of_threads = threads
       @queue = Infrastruct::BlockingQueue.new
-      @results = Array.new
       @threads = []
     end
 
@@ -16,21 +15,15 @@ module Infrastruct
       @queue.unblock!
       @threads.map(&:join)
 
-      @runner.collect(@results)
+      @runner.collect
     end
 
     def run
-      mutex = Mutex.new
-
       @threads = @number_of_threads.times.map do |n|
         Thread.new do
           begin
             while args = @queue.pop do
-              result = @runner.perform(args)
-
-              mutex.synchronize do
-                @results << result
-              end
+              @runner.perform(args)
             end
           rescue ThreadError => error
             raise error unless error.message == 'queue empty'

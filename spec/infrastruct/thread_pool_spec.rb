@@ -17,10 +17,10 @@ RSpec.describe Infrastruct::ThreadPool do
     it 'runs runner and collect results' do
       subject.run
 
-      expect(runner).to receive(:perform).with([1]).and_return(:first)
-      expect(runner).to receive(:perform).with([2]).and_return(:second)
-      expect(runner).to receive(:perform).with([3, 4, 5]).and_return(:third)
-      expect(runner).to receive(:collect).with([:first, :second, :third])
+      expect(runner).to receive(:perform).with([1])
+      expect(runner).to receive(:perform).with([2])
+      expect(runner).to receive(:perform).with([3, 4, 5])
+      expect(runner).to receive(:collect)
 
       subject.enqueue([1])
       subject.enqueue([2])

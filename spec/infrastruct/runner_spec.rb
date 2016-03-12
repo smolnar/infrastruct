@@ -7,7 +7,7 @@ RSpec.describe Infrastruct::Runner do
   let(:worker) { double(:worker) }
 
   describe '#perform' do
-    it 'performs args' do
+    it 'performs args and stores result' do
       expect(worker).to receive(:perform).with(1, 2, 3)
 
       subject.perform([1, 2, 3])
@@ -16,9 +16,14 @@ RSpec.describe Infrastruct::Runner do
 
   describe '#collect' do
     it 'collects results' do
-      expect(worker).to receive(:collect).with([1, 2, 3, 4, 5])
+      allow(worker).to receive(:perform).with(1).and_return(2)
+      allow(worker).to receive(:perform).with(2).and_return(3)
+      expect(worker).to receive(:collect).with([2, 3])
 
-      subject.collect([1, 2, 3, 4, 5])
+      subject.perform(1)
+      subject.perform(2)
+
+      subject.collect
     end
   end
 end
